@@ -1,28 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useSelector, connect } from "react-redux";
 
 import { GET_PRODUCT_REQUEST } from "../../store/actions/product";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Detail from "../../components/Detail/Detail";
+import Loading from "../../components/Loading/Loading";
 
 const ProductDetail = ({ location, getProduct }) => {
-  const { product } = useSelector((state) => state.product);
+  const { loading, product } = useSelector((state) => state.product);
 
-  const getProductAction = () => {
+  const getProductAction = useCallback(() => {
     getProduct(location.state.id);
-  };
+  }, [location.state.id, getProduct]);
 
   useEffect(() => {
     getProductAction();
-  }, []);
+  }, [getProductAction]);
 
   return (
     <div className="product-detail">
-      <>
-        <Navbar />
-        <Detail product={product} />
-      </>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <Navbar />
+          <Detail product={product} />
+        </>
+      )}
     </div>
   );
 };
